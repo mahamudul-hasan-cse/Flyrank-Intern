@@ -43,6 +43,14 @@ The goal of the project is to practice building a production-quality, accessible
 - **AI-assisted coding** – AI tools are used to speed up development, guided by the rules in [`CLAUDE.md`](./CLAUDE.md). All AI-generated code is reviewed before it is committed.
 - **Continuous deployment** – The `main` branch will be deployed to Vercel, with preview deployments for pull requests.
 
+## Development Workflow
+
+1. **Make small, focused changes** – One feature, fix, or doc update per change.
+2. **Use AI assistance carefully** – Give the AI clear context and follow the rules in [`CLAUDE.md`](./CLAUDE.md).
+3. **Review AI-generated code before accepting it** – Read every line, check that it is correct, and make sure no secrets are exposed.
+4. **Verify changes before committing** – Run the app, lint, type-check, and test the affected UI states. Then review `git diff`.
+5. **Follow Conventional Commits** – Use the format described below.
+
 ## Git Commit Convention
 
 This project follows [Conventional Commits](https://www.conventionalcommits.org/).
