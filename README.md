@@ -32,6 +32,37 @@ The goal of the project is to practice building a production-quality, accessible
 | Version Control   | Git and GitHub                               |
 | Deployment        | [Vercel](https://vercel.com/)                |
 
+## Getting Started
+
+> The Next.js application has not been scaffolded yet. These steps prepare your local environment; app commands will be added once the scaffold exists.
+
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) 20 LTS or later (includes npm)
+- [Git](https://git-scm.com/)
+- An API key from the chosen AI provider (needed once AI integration begins)
+
+### Local setup
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/mahamudul-hasan-cse/Flyrank-Intern.git
+cd Flyrank-Intern
+
+# 2. Read the AI-assisted coding rules before contributing
+#    See CLAUDE.md
+```
+
+### Environment variables
+
+Secrets are never committed. Once the app is scaffolded, copy `.env.example` to `.env.local` and fill in your own values:
+
+```bash
+cp .env.example .env.local
+```
+
+`.env.local` is git-ignored. See [`CLAUDE.md`](./CLAUDE.md#7-environment-variables) for the rules.
+
 ## Development Approach
 
 - **Incremental delivery** – The project is built in small, reviewable steps. Each assignment adds a focused piece of functionality.
