@@ -5,10 +5,7 @@ type NavItem = {
   label: string;
 };
 
-const navItems: NavItem[] = [
-  { href: "/", label: "Home" },
-  { href: "/settings", label: "Settings" },
-];
+const navItems: NavItem[] = [{ href: "/", label: "Home" }];
 
 export function SiteHeader() {
   return (
