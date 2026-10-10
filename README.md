@@ -117,11 +117,14 @@ chore: configure Tailwind CSS
 
 FE-01 deliverables (submission not yet finished):
 
-- [ ] Repository initialized and pushed to GitHub
-- [ ] `README.md` – project overview and conventions
-- [ ] `CLAUDE.md` – rules for AI-assisted development
-- [ ] `.gitignore` – Next.js / Node.js ignores
-- [ ] `LICENSE` – MIT License
+- [x] Repository initialized and pushed to GitHub
+- [x] `README.md` – project overview and conventions
+- [x] `CLAUDE.md` – rules for AI-assisted development
+- [x] `.gitignore` – Next.js / Node.js ignores
+- [x] `LICENSE` – MIT License
+- [x] Three Conventional Commits created
+- [x] README reviewed with Cursor
+- [ ] Submit FE-01 assignment
 
 Upcoming work:
 
