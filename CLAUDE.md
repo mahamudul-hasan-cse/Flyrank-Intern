@@ -100,3 +100,14 @@ Use [Conventional Commits](https://www.conventionalcommits.org/) for every commi
 - Match the existing code style, naming, and folder structure.
 - Explain any non-obvious decisions in the pull request or commit description, not in noisy code comments.
 - A human reviews all AI-generated code before it is committed.
+
+## FE-03 Workflow Rules
+
+These rules come from the FE-03 experiment comparing `experiment/vague-prompt` and `experiment/structured-prompt` on the same settings feature. See `WORKFLOW.md` for the full write-up.
+
+- **Define fields and validation up front.** For user-facing forms, list the exact fields, labels, and validation rules before implementation. A vague “profile settings form” prompt led the AI to add a website field and a 50-character display-name cap that were not in the assignment spec.
+- **Map server validation errors to inputs.** When a Server Action returns field-level errors, merge them into each control’s error state (for example, an `errorFor()` helper), not only a generic summary in an `aria-live` region. The vague-prompt branch showed server messages without binding `errors` to `FormField`.
+- **Keep trim and length rules consistent.** Validation, character counters, normalization on save, and persisted values must use the same trimming and length policy. Both experiment branches had bio inconsistencies (trim vs raw length between hint, validator, and `saveProfileSettings`).
+- **Add automated form tests when practical.** AI-generated forms should include tests for validation rules, blocked invalid submit, pending/disabled submit, visible success feedback, server-side errors on fields, and basic keyboard use—matching what the structured-prompt branch covered with Vitest and React Testing Library (32 tests).
+- **Follow explore → plan → code → verify.** Inspect the repo and `CLAUDE.md`, state the plan and files to touch, implement, then run lint, typecheck, build, and tests before treating the feature as done. Do not skip verification because the prompt was short.
+- **Review remains mandatory.** Structured prompts and tests reduce scope invention and catch regressions, but humans still review normalization choices, test mocks, new dependencies, and alignment with product requirements.
