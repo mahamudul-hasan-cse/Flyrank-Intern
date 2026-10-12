@@ -1,140 +1,137 @@
-# AI Research Workspace
+# Movie Explorer AI
 
-> Capstone project for the **FlyRank Frontend AI Engineering Internship**.
+## Overview
 
-## Project Overview
+Movie Explorer AI is a React and TypeScript movie discovery app. Users can search for movies, open a details page, sign in with email and password, and keep a personal list of favorites stored in Firebase.
 
-**AI Research Workspace** is a frontend-focused AI application that helps users do research with AI. Users can chat with an AI assistant, organize their findings into workspaces, save useful responses, and come back to their research later.
+It was built for the FlyRank Frontend AI Engineering internship using AI-assisted development in Cursor, with every change reviewed and verified before it was committed.
 
-The goal of the project is to practice building a production-quality, accessible, and well-structured AI-powered frontend using modern React tooling, while following professional engineering workflows (Git, code review, Conventional Commits, CI/CD deployment).
+## Features
 
-## Planned Features
+- **OMDb movie search** – search movies by title.
+- **Movie cards** – a responsive grid showing poster, title, and year, with a fallback when no poster exists.
+- **Movie details page** – `/movie/:id` shows the poster, year, rating, runtime, genre, director, actors, IMDb rating, and plot.
+- **Firebase email/password authentication** – sign up, log in, log out, and stay signed in after a refresh.
+- **Protected Favorites route** – signed-out visitors to `/favorites` are sent to `/login` and returned to Favorites after logging in.
+- **User-specific Firestore favorites** – save or remove movies from cards and the details page; each user sees only their own list.
+- **Favorite persistence** – favorites are stored in Cloud Firestore and survive refreshes and new sessions.
+- **Responsive UI** – layouts adapt from mobile to desktop.
+- **Loading, error, and empty states** – every async view shows clear feedback.
+- **Accessible forms and controls** – labeled inputs, keyboard-usable buttons, visible focus styles, and saved state shown with text and `aria-pressed`, not color alone.
 
-- **AI chat interface** – Ask questions and receive AI-generated responses, with streaming output.
-- **Research workspaces** – Create, rename, and delete workspaces to group related research topics.
-- **Saved responses** – Bookmark useful AI responses and store them inside a workspace.
-- **Notes and organization** – Add notes, tags, or titles to saved items for easier retrieval.
-- **Search and filter** – Quickly find saved responses across workspaces.
-- **Conversation history** – Revisit previous AI conversations per workspace.
-- **Robust UI states** – Clear loading, error, and empty states throughout the app.
-- **Responsive and accessible design** – Works on desktop and mobile; keyboard and screen-reader friendly.
-- **Secure AI integration** – AI API calls go through server-side routes so API keys are never exposed to the browser.
+## Tech Stack
 
-## Technology Stack
+- [React](https://react.dev/)
+- [TypeScript](https://www.typescriptlang.org/) (strict mode)
+- [Vite](https://vite.dev/)
+- [React Router](https://reactrouter.com/)
+- [OMDb API](https://www.omdbapi.com/)
+- [Firebase Authentication](https://firebase.google.com/docs/auth)
+- [Cloud Firestore](https://firebase.google.com/docs/firestore)
 
-| Area              | Technology                                   |
-| ----------------- | -------------------------------------------- |
-| Framework         | [Next.js](https://nextjs.org/) (App Router)  |
-| UI Library        | [React](https://react.dev/)                  |
-| Language          | [TypeScript](https://www.typescriptlang.org/) |
-| Styling           | [Tailwind CSS](https://tailwindcss.com/)     |
-| AI                | AI API integration (via server-side routes)  |
-| Version Control   | Git and GitHub                               |
-| Deployment        | [Vercel](https://vercel.com/)                |
+## Project Structure
 
-## Getting Started
+```text
+src/
+  components/   Reusable UI: movie cards, grid, search form, auth form, favorite button, route guard
+  pages/        Route-level screens: Home, Movie Details, Favorites, Login
+  services/     External access: OMDb requests, Firebase setup, auth and favorites operations
+  viewmodels/   Hooks that hold page logic and state for search and movie details
+  context/      React providers for auth state and the signed-in user's favorites
+  hooks/        Small hooks that read those contexts (useAuth, useFavorites)
+  models/       App-level data shapes such as Movie and MovieDetails
+  types/        API and helper types for OMDb responses, auth, and navigation
+```
 
-> The Next.js application has not been scaffolded yet. These steps prepare your local environment; app commands will be added once the scaffold exists.
+Firebase and API calls stay in `services`, `context`, and `viewmodels`, so components and pages focus on rendering.
 
-### Prerequisites
+## Environment Variables
 
-- [Node.js](https://nodejs.org/) 20 LTS or later (includes npm)
-- [Git](https://git-scm.com/)
-- An API key from the chosen AI provider (needed once AI integration begins)
+Copy `.env.example` to `.env.local` and fill in your own values. `.env.local` is git-ignored and must never be committed.
 
-### Local setup
+```bash
+VITE_OMDB_API_KEY=
+VITE_FIREBASE_API_KEY=
+VITE_FIREBASE_AUTH_DOMAIN=
+VITE_FIREBASE_PROJECT_ID=
+VITE_FIREBASE_STORAGE_BUCKET=
+VITE_FIREBASE_MESSAGING_SENDER_ID=
+VITE_FIREBASE_APP_ID=
+```
+
+- Get an OMDb key at [omdbapi.com/apikey.aspx](https://www.omdbapi.com/apikey.aspx).
+- Firebase values come from **Project settings → Your apps → Web app** in the Firebase console.
+
+Vite reads these values only when the dev server starts, so restart it after changing them.
+
+## Local Setup
+
+Requires Node.js 20.19+ or 22.12+ (needed by Vite).
 
 ```bash
 # 1. Clone the repository
 git clone https://github.com/mahamudul-hasan-cse/Flyrank-Intern.git
 cd Flyrank-Intern
 
-# 2. Read the AI-assisted coding rules before contributing
-#    See CLAUDE.md
-```
+# 2. Check out the assignment branch
+git checkout assignment/movie-ai-app
 
-### Environment variables
+# 3. Install dependencies
+npm install
 
-Secrets are never committed. Once the app is scaffolded, copy `.env.example` to `.env.local` and fill in your own values:
-
-```bash
+# 4. Create your local environment file
 cp .env.example .env.local
+# Windows PowerShell: Copy-Item .env.example .env.local
+
+# 5. Add your OMDb and Firebase values to .env.local
+
+# 6. Start the dev server
+npm run dev
 ```
 
-`.env.local` is git-ignored. See [`CLAUDE.md`](./CLAUDE.md#7-environment-variables) for the rules.
+## Available Scripts
 
-## Development Approach
+| Command             | Description                                 |
+| ------------------- | ------------------------------------------- |
+| `npm run dev`       | Start the Vite development server           |
+| `npm run lint`      | Run oxlint on the source code               |
+| `npm run typecheck` | Run the TypeScript project type check       |
+| `npm run build`     | Type-check and create a production build    |
 
-- **Incremental delivery** – The project is built in small, reviewable steps. Each assignment adds a focused piece of functionality.
-- **Component-driven UI** – Reusable, typed React functional components with clear props.
-- **Type safety first** – TypeScript in strict mode; avoid `any`.
-- **Accessibility by default** – Semantic HTML, proper labels, keyboard navigation, and sufficient color contrast.
-- **Complete UI states** – Every data-driven view handles loading, error, and empty states.
-- **Security** – Secrets live in environment variables (`.env.local`), are never committed, and are only used on the server.
-- **AI-assisted coding** – AI tools are used to speed up development, guided by the rules in [`CLAUDE.md`](./CLAUDE.md). All AI-generated code is reviewed before it is committed.
-- **Continuous deployment** – The `main` branch will be deployed to Vercel, with preview deployments for pull requests.
+## Firebase Setup
 
-## Development Workflow
+1. In the Firebase console, enable **Authentication → Sign-in method → Email/Password**.
+2. Create a **Firestore Database** for the project.
+3. Favorites are stored at:
 
-1. **Make small, focused changes** – One feature, fix, or doc update per change.
-2. **Use AI assistance carefully** – Give the AI clear context and follow the rules in [`CLAUDE.md`](./CLAUDE.md).
-3. **Review AI-generated code before accepting it** – Read every line, check that it is correct, and make sure no secrets are exposed.
-4. **Verify changes before committing** – Run the app, lint, type-check, and test the affected UI states. Then review `git diff`.
-5. **Follow Conventional Commits** – Use the format described below.
+   ```text
+   users/{uid}/favorites/{imdbID}
+   ```
 
-## Git Commit Convention
+   Each document holds only `imdbID`, `title`, `year`, and `posterUrl`.
 
-This project follows [Conventional Commits](https://www.conventionalcommits.org/).
+4. Use rules that let each signed-in user read and write only their own favorites:
 
-```
-<type>(optional scope): <short description>
-```
+   ```text
+   match /users/{userId}/favorites/{movieId} {
+     allow read, write: if request.auth != null && request.auth.uid == userId;
+   }
+   ```
 
-| Type       | Use for                                                   |
-| ---------- | --------------------------------------------------------- |
-| `feat`     | A new feature                                             |
-| `fix`      | A bug fix                                                 |
-| `docs`     | Documentation-only changes                                |
-| `style`    | Formatting changes that do not affect code behavior       |
-| `refactor` | Code changes that neither fix a bug nor add a feature     |
-| `test`     | Adding or updating tests                                  |
-| `chore`    | Tooling, dependencies, configuration, and maintenance     |
-| `ci`       | CI/CD configuration changes                               |
-| `perf`     | Performance improvements                                  |
+## AI-Assisted Development
 
-Examples:
+- [`PROMPTS.md`](./PROMPTS.md) records each feature prompt, the AI output, and my manual review.
+- [`AI_DEVELOPMENT.md`](./AI_DEVELOPMENT.md) summarizes how AI helped, the workflow used, the manual corrections made, and what I learned.
 
-```
-docs: add project README and AI coding rules
-feat(chat): add streaming AI response component
-fix(workspace): handle empty workspace list
-chore: configure Tailwind CSS
-```
+Project rules for AI coding assistants are in [`CLAUDE.md`](./CLAUDE.md).
 
-## Current Project Status
+## Verification
 
-**Phase: Environment setup (Assignment FE-01) – In Progress**
+Each feature was checked with `npm run lint`, `npm run typecheck`, and `npm run build`. Live browser tests covered OMDb search, movie details, Firebase signup/login/logout and session persistence, the protected Favorites route, saving and removing Firestore favorites, persistence after refresh, and isolation of favorites between two users.
 
-FE-01 deliverables (submission not yet finished):
+## Assignment
 
-- [x] Repository initialized and pushed to GitHub
-- [x] `README.md` – project overview and conventions
-- [x] `CLAUDE.md` – rules for AI-assisted development
-- [x] `.gitignore` – Next.js / Node.js ignores
-- [x] `LICENSE` – MIT License
-- [x] Three Conventional Commits created
-- [x] README reviewed with Cursor
-- [ ] Submit FE-01 assignment
-
-Upcoming work:
-
-- [ ] Scaffold the Next.js + TypeScript + Tailwind CSS application
-- [ ] Build the core UI layout
-- [ ] Integrate the AI API
-- [ ] Implement workspaces and saved responses
-- [ ] Deploy to Vercel
-
-The Next.js application has **not** been created yet. This repository currently contains only the setup and documentation files.
+This project was built for the **FlyRank Frontend AI Engineering internship – Week 3 assignment**.
 
 ## License
 
