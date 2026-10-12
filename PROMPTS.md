@@ -27,3 +27,17 @@ AI output:
 
 Manual review:
 Lint, typecheck, and build passed. There is no `.env.local`, so a live OMDb search was not run. The label weight was changed from `650` to `600` so it uses a standard font weight. No other code changes were required after verification.
+
+## Prompt 3 — Movie details page
+
+Goal:
+Open a movie details page from each search card. Load the movie by IMDb ID and show its poster and main facts. Do not add Firebase, authentication, favorites persistence, recent searches, genre filters, or theme switching.
+
+Prompt summary:
+Read the existing structure and `CLAUDE.md`. Add `/movie/:id`. Link each `MovieCard` to that route. Fetch details through the OMDb service with the existing environment variable. Show poster, title, year, rated, runtime, genre, director, actors, plot, and IMDb rating when OMDb provides them. Handle loading, an invalid ID, a missing movie, API or network errors, a missing poster, and missing optional fields. Keep the back link keyboard accessible. Update this prompt log. Verify lint, typecheck, and build. Test one real movie if a local key exists. Do not commit.
+
+AI output:
+`getMovieById`, `MovieDetails`, `useMovieDetails`, `MovieDetailsPage`, a card link, details styles, and shared OMDb request handling.
+
+Manual review:
+Lint warned about setting state immediately inside the details effect, so loading and invalid states are derived during render instead. A live check of Batman Begins (`tt0372784`) showed the poster, title facts, plot, and a focusable Back link. An ID OMDb cannot resolve returned “Error getting data.”, so that response is now treated as movie not found rather than a raw service error.

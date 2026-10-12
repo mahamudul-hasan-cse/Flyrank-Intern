@@ -1,8 +1,17 @@
-import type { Movie } from "../models/movie.ts";
+import type { Movie, MovieDetails } from "../models/movie.ts";
 import type { OmdbSearchItem, OmdbSearchResponse } from "../types/omdb.ts";
 
 const OMDB_SEARCH_URL = "https://www.omdbapi.com/";
-const NOT_FOUND_MESSAGE = "Movie not found!";
+const NOT_FOUND_MESSAGES = new Set([
+  "Movie not found!",
+  "Incorrect IMDb ID.",
+  "Error getting data.",
+]);
+const IMDB_ID_PATTERN = /^tt\d+$/;
+
+export function isImdbId(id: string): boolean {
+  return IMDB_ID_PATTERN.test(id);
+}
 
 function readApiKey(): string {
   const apiKey = import.meta.env.VITE_OMDB_API_KEY;
@@ -54,9 +63,35 @@ function parseSearchResponse(value: unknown): OmdbSearchResponse {
 }
 
 function toPosterUrl(poster: string): string | null {
-  const trimmed = poster.trim();
+  return optionalText(poster);
+}
+
+function optionalText(value: unknown): string | null {
+  if (typeof value !== "string") return null;
+  const trimmed = value.trim();
   if (trimmed.length === 0 || trimmed.toUpperCase() === "N/A") return null;
   return trimmed;
+}
+
+async function fetchOmdb(params: Record<string, string>): Promise<unknown> {
+  const url = new URL(OMDB_SEARCH_URL);
+  url.searchParams.set("apikey", readApiKey());
+  for (const [key, value] of Object.entries(params)) {
+    url.searchParams.set(key, value);
+  }
+
+  let response: Response;
+  try {
+    response = await fetch(url);
+  } catch {
+    throw new Error("Could not reach the movie service. Check your connection and try again.");
+  }
+
+  if (!response.ok) {
+    throw new Error("The movie service is unavailable right now. Please try again.");
+  }
+
+  return response.json() as Promise<unknown>;
 }
 
 function toMovie(item: OmdbSearchItem): Movie {
@@ -72,29 +107,56 @@ export async function searchMoviesByTitle(title: string): Promise<Movie[]> {
   const query = title.trim();
   if (query.length === 0) return [];
 
-  const url = new URL(OMDB_SEARCH_URL);
-  url.searchParams.set("apikey", readApiKey());
-  url.searchParams.set("s", query);
-  url.searchParams.set("type", "movie");
-
-  let response: Response;
-  try {
-    response = await fetch(url);
-  } catch {
-    throw new Error("Could not reach the movie service. Check your connection and try again.");
-  }
-
-  if (!response.ok) {
-    throw new Error("The movie service is unavailable right now. Please try again.");
-  }
-
-  const payload: unknown = await response.json();
+  const payload = await fetchOmdb({ s: query, type: "movie" });
   const parsed = parseSearchResponse(payload);
 
   if (parsed.Response === "False") {
-    if (parsed.Error === NOT_FOUND_MESSAGE) return [];
+    if (NOT_FOUND_MESSAGES.has(parsed.Error)) return [];
     throw new Error(parsed.Error);
   }
 
   return parsed.Search.map(toMovie);
+}
+
+function toMovieDetails(value: Record<string, unknown>): MovieDetails {
+  const title = optionalText(value.Title);
+  const id = optionalText(value.imdbID);
+  if (!title || !id) {
+    throw new Error("The movie service returned an unexpected response.");
+  }
+
+  return {
+    id,
+    title,
+    year: optionalText(value.Year),
+    rated: optionalText(value.Rated),
+    runtime: optionalText(value.Runtime),
+    genre: optionalText(value.Genre),
+    director: optionalText(value.Director),
+    actors: optionalText(value.Actors),
+    plot: optionalText(value.Plot),
+    imdbRating: optionalText(value.imdbRating),
+    posterUrl: optionalText(value.Poster),
+  };
+}
+
+export async function getMovieById(id: string): Promise<MovieDetails | null> {
+  if (!isImdbId(id)) return null;
+
+  const payload = await fetchOmdb({ i: id, plot: "full" });
+  if (!isRecord(payload)) {
+    throw new Error("The movie service returned an unexpected response.");
+  }
+
+  if (payload.Response === "False") {
+    const message = typeof payload.Error === "string" ? payload.Error : "The movie could not be loaded.";
+    if (NOT_FOUND_MESSAGES.has(message)) return null;
+    throw new Error(message);
+  }
+
+  if (payload.Response !== "True") {
+    throw new Error("The movie service returned an unexpected response.");
+  }
+
+  return toMovieDetails(payload);
 }

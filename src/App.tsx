@@ -4,6 +4,7 @@ import { AppHeader } from "./components/AppHeader.tsx";
 import { FavoritesPage } from "./pages/FavoritesPage.tsx";
 import { HomePage } from "./pages/HomePage.tsx";
 import { LoginPage } from "./pages/LoginPage.tsx";
+import { MovieDetailsPage } from "./pages/MovieDetailsPage.tsx";
 
 export default function App() {
   return (
@@ -13,6 +14,7 @@ export default function App() {
         <main>
           <Routes>
             <Route path="/" element={<HomePage />} />
+            <Route path="/movie/:id" element={<MovieDetailsPage />} />
             <Route path="/favorites" element={<FavoritesPage />} />
             <Route path="/login" element={<LoginPage />} />
           </Routes>
