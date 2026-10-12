@@ -65,9 +65,38 @@ a {
 }
 
 .nav-link:focus-visible,
+.nav-button:focus-visible,
 .brand:focus-visible {
   outline: 2px solid #171717;
   outline-offset: 3px;
+}
+
+.header-account {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+}
+
+.nav-button {
+  border: 0;
+  padding: 0.25rem 0.1rem;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.nav-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.header-error {
+  width: min(100% - 2rem, 64rem);
+  margin: 0 auto 0.75rem;
+  color: #9f1239;
 }
 
 main {
@@ -201,6 +230,76 @@ main {
 .movie-poster-fallback {
   display: grid;
   place-items: center;
+  color: #3f4652;
+  font-size: 0.85rem;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  max-width: 28rem;
+  margin-top: 1.25rem;
+}
+
+.auth-form input,
+.auth-form button[type="submit"] {
+  font: inherit;
+}
+
+.auth-form input {
+  padding: 0.55rem 0.7rem;
+  border: 1px solid #c5ccd6;
+  border-radius: 0.4rem;
+  background: #ffffff;
+}
+
+.auth-form button[type="submit"] {
+  margin-top: 0.4rem;
+  padding: 0.55rem 1rem;
+  border: 0;
+  border-radius: 0.4rem;
+  background: #171717;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.auth-form button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.auth-form input:focus-visible,
+.auth-form button:focus-visible {
+  outline: 2px solid #171717;
+  outline-offset: 2px;
+}
+
+.auth-mode {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.6rem;
+}
+
+.auth-mode-button {
+  padding: 0.4rem 0.75rem;
+  border: 1px solid #c5ccd6;
+  border-radius: 0.4rem;
+  background: #ffffff;
+  font: inherit;
+  cursor: pointer;
+}
+
+.auth-mode-button.active {
+  border-style: solid;
+  border-color: #171717;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 0.2rem;
+}
+
+.auth-hint {
+  margin: 0;
   color: #3f4652;
   font-size: 0.85rem;
 }

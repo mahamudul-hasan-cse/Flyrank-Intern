@@ -41,3 +41,17 @@ AI output:
 
 Manual review:
 Lint warned about setting state immediately inside the details effect, so loading and invalid states are derived during render instead. A live check of Batman Begins (`tt0372784`) showed the poster, title facts, plot, and a focusable Back link. An ID OMDb cannot resolve returned “Error getting data.”, so that response is now treated as movie not found rather than a raw service error.
+
+## Prompt 4 — Firebase authentication
+
+Goal:
+Add email and password registration, login, logout, and signed-in state. Do not add favorites storage, protected routes, recent searches, genre filters, or theme switching.
+
+Prompt summary:
+Read the existing structure and `CLAUDE.md`. Install Firebase and read only `VITE_FIREBASE_*` environment variables. Do not hard-code credentials. Add a Firebase config module, auth service, and React auth state. Update `/login` with login and signup modes, labels, loading, errors, and a redirect after success. Show Login when signed out, and the user email plus Logout when signed in. Update `.env.example` with empty Firebase values and this prompt log. Verify lint, typecheck, and build. Do not invent credentials or commit.
+
+AI output:
+Firebase 11 setup, `firebase` and `authService` modules, `AuthProvider`, `useAuth`, `AuthForm`, login page states, and header account controls.
+
+Manual review:
+The newest Firebase release requires Node 24, and this machine uses Node 22, so the app uses Firebase 11.10.0 instead. After real Firebase values were added to `.env.local`, a browser pass created a temporary account, confirmed redirect to `/`, the header email and Logout button, logout back to Login, login with the same account, and that refresh kept the session. Invalid email, empty password, and a wrong password each showed a clear message and stayed on `/login`. No page crash occurred. The browser logged one HTTP 400 for the rejected password, which is Firebase’s failed sign-in response, not an unhandled app error. No Firebase config values appeared in the page. Lint, typecheck, and build passed. No auth code change was required after this check.
