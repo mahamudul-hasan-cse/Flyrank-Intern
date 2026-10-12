@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
+import { FavoriteButton } from "../components/FavoriteButton.tsx";
 import type { MovieDetails } from "../models/movie.ts";
 import { useMovieDetails } from "../viewmodels/useMovieDetails.ts";
 
@@ -88,6 +89,14 @@ export function MovieDetailsPage() {
           <MoviePoster movie={movie} />
           <div>
             <h1>{movie.title}</h1>
+            <FavoriteButton
+              movie={{
+                id: movie.id,
+                title: movie.title,
+                year: movie.year ?? "",
+                posterUrl: movie.posterUrl,
+              }}
+            />
             <dl>
               {detailRows(movie).map((row) => (
                 <div key={row.label}>

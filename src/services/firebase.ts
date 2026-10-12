@@ -1,5 +1,6 @@
 import { initializeApp, type FirebaseApp, type FirebaseOptions } from "firebase/app";
 import { getAuth, type Auth } from "firebase/auth";
+import { initializeFirestore, type Firestore } from "firebase/firestore";
 
 function requiredEnv(value: string | undefined): string | null {
   if (typeof value !== "string") return null;
@@ -24,12 +25,9 @@ function readFirebaseOptions(): FirebaseOptions | null {
 
 let firebaseApp: FirebaseApp | null = null;
 let firebaseAuth: Auth | null = null;
+let firestoreDb: Firestore | null = null;
 
-export function isFirebaseConfigured(): boolean {
-  return readFirebaseOptions() !== null;
-}
-
-export function getFirebaseAuth(): Auth {
+function ensureFirebaseApp(): FirebaseApp {
   const options = readFirebaseOptions();
   if (!options) {
     throw new Error(
@@ -37,10 +35,24 @@ export function getFirebaseAuth(): Auth {
     );
   }
 
-  if (!firebaseApp || !firebaseAuth) {
-    firebaseApp = initializeApp(options);
-    firebaseAuth = getAuth(firebaseApp);
-  }
+  if (!firebaseApp) firebaseApp = initializeApp(options);
+  return firebaseApp;
+}
 
+export function isFirebaseConfigured(): boolean {
+  return readFirebaseOptions() !== null;
+}
+
+export function getFirebaseAuth(): Auth {
+  if (!firebaseAuth) firebaseAuth = getAuth(ensureFirebaseApp());
   return firebaseAuth;
+}
+
+export function getFirestoreDb(): Firestore {
+  if (!firestoreDb) {
+    firestoreDb = initializeFirestore(ensureFirebaseApp(), {
+      experimentalForceLongPolling: true,
+    });
+  }
+  return firestoreDb;
 }

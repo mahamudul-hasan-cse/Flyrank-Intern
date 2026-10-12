@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 
 import type { Movie } from "../models/movie.ts";
+import { FavoriteButton } from "./FavoriteButton.tsx";
 
 type MovieCardProps = {
   movie: Movie;
@@ -29,6 +30,7 @@ export function MovieCard({ movie }: MovieCardProps) {
         <h2>{movie.title}</h2>
         <p>{movie.year}</p>
       </Link>
+      <FavoriteButton movie={movie} />
     </article>
   );
 }

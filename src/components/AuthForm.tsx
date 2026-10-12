@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import { useAuth } from "../hooks/useAuth.ts";
 
@@ -7,9 +7,17 @@ type AuthMode = "login" | "signup";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+function returnPath(state: unknown): string {
+  if (typeof state !== "object" || state === null || !("from" in state)) return "/";
+  const from = state.from;
+  if (typeof from !== "string" || !from.startsWith("/") || from.startsWith("//")) return "/";
+  return from;
+}
+
 export function AuthForm() {
   const { signIn, signUp } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [mode, setMode] = useState<AuthMode>("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -46,7 +54,8 @@ export function AuthForm() {
     try {
       if (isSignup) await signUp(trimmedEmail, password);
       else await signIn(trimmedEmail, password);
-      navigate("/", { replace: true });
+      const from = returnPath(location.state);
+      navigate(from, { replace: true });
     } catch (error: unknown) {
       setErrorMessage(error instanceof Error ? error.message : "Authentication failed. Please try again.");
     } finally {
