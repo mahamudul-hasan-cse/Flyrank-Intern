@@ -1,4 +1,9 @@
-import type { Movie, MovieDetails } from "../models/movie.ts";
+import type {
+  Movie,
+  MovieDetails,
+  MovieSearchFilters,
+  MovieSearchPage,
+} from "../models/movie.ts";
 import type { OmdbSearchItem, OmdbSearchResponse } from "../types/omdb.ts";
 
 const OMDB_SEARCH_URL = "https://www.omdbapi.com/";
@@ -103,19 +108,33 @@ function toMovie(item: OmdbSearchItem): Movie {
   };
 }
 
-export async function searchMoviesByTitle(title: string): Promise<Movie[]> {
-  const query = title.trim();
-  if (query.length === 0) return [];
+function toTotalResults(value: string, fallback: number): number {
+  const total = Number.parseInt(value, 10);
+  return Number.isFinite(total) && total >= 0 ? total : fallback;
+}
 
-  const payload = await fetchOmdb({ s: query, type: "movie" });
+export async function searchMovies(
+  filters: MovieSearchFilters,
+  page: number,
+): Promise<MovieSearchPage> {
+  const query = filters.query.trim();
+  if (query.length === 0) return { movies: [], totalResults: 0 };
+
+  const params: Record<string, string> = { s: query, page: String(page) };
+  const year = filters.year.trim();
+  if (year.length > 0) params.y = year;
+  if (filters.type) params.type = filters.type;
+
+  const payload = await fetchOmdb(params);
   const parsed = parseSearchResponse(payload);
 
   if (parsed.Response === "False") {
-    if (NOT_FOUND_MESSAGES.has(parsed.Error)) return [];
+    if (NOT_FOUND_MESSAGES.has(parsed.Error)) return { movies: [], totalResults: 0 };
     throw new Error(parsed.Error);
   }
 
-  return parsed.Search.map(toMovie);
+  const movies = parsed.Search.map(toMovie);
+  return { movies, totalResults: toTotalResults(parsed.totalResults, movies.length) };
 }
 
 function toMovieDetails(value: Record<string, unknown>): MovieDetails {

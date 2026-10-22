@@ -8,7 +8,8 @@ It was built for the FlyRank Frontend AI Engineering internship using AI-assiste
 
 ## Features
 
-- **OMDb movie search** – search movies by title.
+- **OMDb movie search** – search by title with optional year and type (movie, series, episode) filters, and a "Load more" button for further pages.
+- **Shareable search URLs** – the query and filters live in the URL (for example `/?q=batman&y=2008&type=movie`), so Back navigation restores results and links can be shared.
 - **Movie cards** – a responsive grid showing poster, title, and year, with a fallback when no poster exists.
 - **Movie details page** – `/movie/:id` shows the poster, year, rating, runtime, genre, director, actors, IMDb rating, and plot.
 - **Firebase email/password authentication** – sign up, log in, log out, and stay signed in after a refresh.

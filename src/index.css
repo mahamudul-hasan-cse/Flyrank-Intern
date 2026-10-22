@@ -135,6 +135,32 @@ main {
   gap: 0.5rem;
 }
 
+.movie-search-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 0.4rem;
+}
+
+.movie-search-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.movie-search .movie-search-field input {
+  flex: 0 0 auto;
+  width: 8rem;
+}
+
+.movie-search select {
+  padding: 0.55rem 0.7rem;
+  border: 1px solid #c5ccd6;
+  border-radius: 0.4rem;
+  font: inherit;
+  background: #ffffff;
+}
+
 .movie-search input {
   flex: 1 1 14rem;
   min-width: 0;
@@ -161,7 +187,9 @@ main {
 }
 
 .movie-search input:focus-visible,
-.movie-search button:focus-visible {
+.movie-search select:focus-visible,
+.movie-search button:focus-visible,
+.secondary-button:focus-visible {
   outline: 2px solid #171717;
   outline-offset: 2px;
 }
@@ -173,6 +201,33 @@ main {
 .search-status {
   min-height: 1.5rem;
   margin: 1rem 0;
+}
+
+.search-status .secondary-button {
+  margin-top: 0.5rem;
+}
+
+.secondary-button {
+  padding: 0.5rem 1rem;
+  border: 1px solid #171717;
+  border-radius: 0.4rem;
+  background: #ffffff;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.secondary-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.load-more {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
 }
 
 .movie-grid {

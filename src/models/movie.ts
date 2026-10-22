@@ -5,6 +5,21 @@ export type Movie = {
   posterUrl: string | null;
 };
 
+export const MOVIE_TYPES = ["movie", "series", "episode"] as const;
+
+export type MovieType = (typeof MOVIE_TYPES)[number];
+
+export type MovieSearchFilters = {
+  query: string;
+  year: string;
+  type: MovieType | "";
+};
+
+export type MovieSearchPage = {
+  movies: Movie[];
+  totalResults: number;
+};
+
 export type MovieDetails = {
   id: string;
   title: string;
