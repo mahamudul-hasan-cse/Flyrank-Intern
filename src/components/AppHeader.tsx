@@ -31,6 +31,7 @@ export function AppHeader() {
     <header className="site-header">
       <div className="site-header-inner">
         <NavLink to="/" className="brand">
+          <span className="brand-mark" aria-hidden="true" />
           Movie Explorer AI
         </NavLink>
         <nav aria-label="Main">

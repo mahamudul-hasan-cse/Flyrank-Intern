@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 
 import { MovieGrid } from "../components/MovieGrid.tsx";
+import { MovieGridSkeleton } from "../components/MovieGridSkeleton.tsx";
 import { useFavorites } from "../hooks/useFavorites.ts";
 
 export function FavoritesPage() {
@@ -11,9 +12,12 @@ export function FavoritesPage() {
       <h1>Favorites</h1>
 
       {status === "loading" ? (
-        <p className="status-panel" aria-live="polite" aria-busy="true">
-          Loading your favorites…
-        </p>
+        <>
+          <p className="sr-only" aria-live="polite" aria-busy="true">
+            Loading your favorites…
+          </p>
+          <MovieGridSkeleton count={5} />
+        </>
       ) : null}
 
       {status === "error" ? (
@@ -23,9 +27,12 @@ export function FavoritesPage() {
       ) : null}
 
       {status === "ready" && favorites.length === 0 ? (
-        <p>
-          You have not saved any movies yet. <Link to="/">Search for a movie</Link>
-        </p>
+        <div className="status-panel empty-state">
+          <p>You have not saved any movies yet.</p>
+          <Link className="primary-link" to="/">
+            Search for a movie
+          </Link>
+        </div>
       ) : null}
 
       {status === "ready" && favorites.length > 0 ? <MovieGrid movies={favorites} /> : null}

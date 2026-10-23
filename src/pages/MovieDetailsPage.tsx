@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
 import { FavoriteButton } from "../components/FavoriteButton.tsx";
+import { RatingBadge } from "../components/RatingBadge.tsx";
 import type { MovieDetails } from "../models/movie.ts";
 import { useMovieDetails } from "../viewmodels/useMovieDetails.ts";
 
@@ -22,25 +23,107 @@ function detailRows(movie: MovieDetails): DetailRow[] {
   ];
 }
 
-function MoviePoster({ movie }: { movie: MovieDetails }) {
-  const [imageFailed, setImageFailed] = useState(false);
-  const showPoster = movie.posterUrl !== null && !imageFailed;
+function BackLink() {
+  return (
+    <Link className="back-link" to="/">
+      <span aria-hidden="true">←</span> Back to search
+    </Link>
+  );
+}
 
-  if (!showPoster) {
-    return (
-      <div className="details-poster details-poster-fallback" role="img" aria-label={`No poster for ${movie.title}`}>
-        No poster
-      </div>
-    );
-  }
+function MovieDetailsView({ movie }: { movie: MovieDetails }) {
+  const [imageFailed, setImageFailed] = useState(false);
+  const posterUrl = movie.posterUrl !== null && !imageFailed ? movie.posterUrl : null;
+  const meta = [movie.year, movie.rated, movie.runtime].filter(Boolean);
+  const genres = movie.genre?.split(",").map((genre) => genre.trim()) ?? [];
 
   return (
-    <img
-      className="details-poster"
-      src={movie.posterUrl ?? undefined}
-      alt={`${movie.title} poster`}
-      onError={() => setImageFailed(true)}
-    />
+    <article className="movie-details">
+      <div className="details-hero full-bleed">
+        {posterUrl ? <img className="details-backdrop" src={posterUrl} alt="" aria-hidden="true" /> : null}
+        <div className="details-scrim" aria-hidden="true" />
+        <div className="details-hero-inner">
+          <BackLink />
+          <div className="details-headline">
+            {posterUrl ? (
+              <img
+                className="details-poster"
+                src={posterUrl}
+                alt={`${movie.title} poster`}
+                onError={() => setImageFailed(true)}
+              />
+            ) : (
+              <div className="details-poster details-poster-fallback" role="img" aria-label={`No poster for ${movie.title}`}>
+                <span aria-hidden="true">{movie.title}</span>
+              </div>
+            )}
+            <div className="details-title">
+              {genres.length > 0 ? (
+                <ul className="genre-list" aria-label="Genres">
+                  {genres.map((genre) => (
+                    <li key={genre}>{genre}</li>
+                  ))}
+                </ul>
+              ) : null}
+              <h1>{movie.title}</h1>
+              <div className="details-meta">
+                {movie.imdbRating ? <RatingBadge rating={movie.imdbRating} size="large" /> : null}
+                {meta.length > 0 ? <span>{meta.join(" · ")}</span> : null}
+              </div>
+              {movie.director ? (
+                <p className="details-credit">
+                  Directed by <strong>{movie.director}</strong>
+                </p>
+              ) : null}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="details-actions">
+        <p className="details-actions-title" aria-hidden="true">
+          {movie.title}
+        </p>
+        <FavoriteButton
+          movie={{
+            id: movie.id,
+            title: movie.title,
+            year: movie.year ?? "",
+            posterUrl: movie.posterUrl,
+          }}
+        />
+      </div>
+
+      <div className="details-body">
+        <section className="details-section" aria-labelledby="details-plot">
+          <h2 id="details-plot">Plot</h2>
+          <p>{movie.plot ?? "Not available"}</p>
+        </section>
+        <section className="details-section" aria-labelledby="details-facts">
+          <h2 id="details-facts">Details</h2>
+          <dl>
+            {detailRows(movie).map((row) => (
+              <div key={row.label}>
+                <dt>{row.label}</dt>
+                <dd>{row.value ?? "Not available"}</dd>
+              </div>
+            ))}
+          </dl>
+        </section>
+      </div>
+    </article>
+  );
+}
+
+function StatusPanel({ title, message }: { title: string; message: string }) {
+  return (
+    <>
+      <BackLink />
+      <div className="status-panel status-panel-error" role="alert">
+        <h1>{title}</h1>
+        <p>{message}</p>
+      </div>
+    </>
   );
 }
 
@@ -49,67 +132,30 @@ export function MovieDetailsPage() {
   const { movie, status, errorMessage } = useMovieDetails(id);
 
   return (
-    <section className="page">
-      <p>
-        <Link className="back-link" to="/">
-          Back to search
-        </Link>
-      </p>
-
+    <section className="page details-page">
       {status === "loading" ? (
-        <div className="status-panel" aria-live="polite" aria-busy="true">
-          <h1>Movie details</h1>
-          <p>Loading movie details…</p>
-        </div>
-      ) : null}
-
-      {status === "invalid" ? (
-        <div className="status-panel status-panel-error" role="alert">
-          <h1>Movie not available</h1>
-          <p>This movie link is not valid.</p>
-        </div>
-      ) : null}
-
-      {status === "not-found" ? (
-        <div className="status-panel status-panel-error" role="alert">
-          <h1>Movie not found</h1>
-          <p>No movie matches this ID.</p>
-        </div>
-      ) : null}
-
-      {status === "error" ? (
-        <div className="status-panel status-panel-error" role="alert">
-          <h1>Movie details unavailable</h1>
-          <p>{errorMessage}</p>
-        </div>
-      ) : null}
-
-      {status === "ready" && movie ? (
-        <article className="movie-details">
-          <MoviePoster movie={movie} />
-          <div>
-            <h1>{movie.title}</h1>
-            <FavoriteButton
-              movie={{
-                id: movie.id,
-                title: movie.title,
-                year: movie.year ?? "",
-                posterUrl: movie.posterUrl,
-              }}
-            />
-            <dl>
-              {detailRows(movie).map((row) => (
-                <div key={row.label}>
-                  <dt>{row.label}</dt>
-                  <dd>{row.value ?? "Not available"}</dd>
-                </div>
-              ))}
-            </dl>
-            <h2>Plot</h2>
-            <p>{movie.plot ?? "Not available"}</p>
+        <div className="details-hero full-bleed details-loading" aria-live="polite" aria-busy="true">
+          <div className="details-hero-inner">
+            <BackLink />
+            <div className="details-headline">
+              <div className="details-poster skeleton" aria-hidden="true" />
+              <div className="details-title">
+                <h1 className="sr-only">Movie details</h1>
+                <p className="sr-only">Loading movie details…</p>
+                <div className="skeleton skeleton-title" aria-hidden="true" />
+                <div className="skeleton skeleton-line" aria-hidden="true" />
+                <div className="skeleton skeleton-line skeleton-line-short" aria-hidden="true" />
+              </div>
+            </div>
           </div>
-        </article>
+        </div>
       ) : null}
+
+      {status === "invalid" ? <StatusPanel title="Movie not available" message="This movie link is not valid." /> : null}
+      {status === "not-found" ? <StatusPanel title="Movie not found" message="No movie matches this ID." /> : null}
+      {status === "error" ? <StatusPanel title="Movie details unavailable" message={errorMessage} /> : null}
+
+      {status === "ready" && movie ? <MovieDetailsView key={movie.id} movie={movie} /> : null}
     </section>
   );
 }

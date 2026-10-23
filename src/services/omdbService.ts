@@ -18,6 +18,11 @@ export function isImdbId(id: string): boolean {
   return IMDB_ID_PATTERN.test(id);
 }
 
+export function hasOmdbApiKey(): boolean {
+  const apiKey = import.meta.env.VITE_OMDB_API_KEY;
+  return typeof apiKey === "string" && apiKey.trim().length > 0;
+}
+
 function readApiKey(): string {
   const apiKey = import.meta.env.VITE_OMDB_API_KEY;
   if (typeof apiKey !== "string" || apiKey.trim().length === 0) {
